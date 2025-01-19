@@ -1,23 +1,23 @@
 scenario: 
-  # environment: scenarios.simple
+  environment: scenarios.simple
   # environment: scenarios.harbor_logistics
-  environment: scenarios.drone_delivery
+  # environment: scenarios.drone_delivery
 
-# decision_making: # Case 1
-#   plugin: plugins.grape.grape.GRAPE
-#   GRAPE:
-#     cost_weight_factor: 1.0
-#     social_inhibition_factor: 100
-#     initialize_partition: Distance # Options: None; Distance      
-#     reinitialize_partition_on_completion: Distance # Options: None; Distance; 
+decision_making: # Case 1
+  plugin: plugins.grape.grape.GRAPE
+  GRAPE:
+    cost_weight_factor: 1.0
+    social_inhibition_factor: 100
+    initialize_partition: Distance # Options: None; Distance      
+    reinitialize_partition_on_completion: Distance # Options: None; Distance; 
 
-decision_making: # Case 2
-  plugin: plugins.cbba.cbba.CBBA
-  CBBA:  
-    max_tasks_per_agent: 5 
-    task_reward_discount_factor: 0.999 
-    winning_bid_cancel: True
-    acceptable_empty_bundle_duration: 500 # sec
+# decision_making: # Case 2
+#   plugin: plugins.cbba.cbba.CBBA
+#   CBBA:  
+#     max_tasks_per_agent: 5 
+#     task_reward_discount_factor: 0.999 
+#     winning_bid_cancel: True
+#     acceptable_empty_bundle_duration: 500 # sec
 
 # decision_making: # Case 3
 #   plugin: plugins.greedy.greedy.FirstClaimGreedy
@@ -28,8 +28,8 @@ decision_making: # Case 2
 
 
 agents:
-  behavior_tree_xml: default_bt.xml 
-  quantity: 1
+  behavior_tree_xml: new_bt.xml 
+  quantity: 10
   locations:
     x_min: 0
     x_max: 1400
@@ -55,8 +55,8 @@ tasks:
     non_overlap_radius: 0
   threshold_done_by_arrival: 10.0
   amounts:  # Added amounts range for tasks
-    min: 6.0
-    max: 60.0      
+    min: 30.0
+    max: 100.0      
   dynamic_task_generation:
     enabled: True
     interval_seconds: 500
