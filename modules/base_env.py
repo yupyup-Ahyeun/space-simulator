@@ -127,6 +127,11 @@ class BaseEnv:
                 agent.draw_work_done(self.screen)
             if self.rendering_options.get('agent_situation_awareness_circle'): # Draw each agent's situation awareness radius circle    
                 agent.draw_situation_awareness_circle(self.screen)
+            
+            text_surface_priority = agent.font.render(f"Priority: {agent.group_leader_priority}", True, (50, 50, 50))
+            text_surface_leader = agent.font.render(f"Leader: {agent.leader}", True, (50, 50, 50))
+            self.screen.blit(text_surface_priority, (agent.position[0] + 10, agent.position[1] + 30))
+            self.screen.blit(text_surface_leader, (agent.position[0] + 10, agent.position[1] + 40))
 
     def draw_agents(self):
         for agent in self.agents:

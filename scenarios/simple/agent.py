@@ -15,9 +15,9 @@ class Agent(BaseAgent):
     def __init__(self, agent_id, position, tasks_info):
         super().__init__(agent_id, position, tasks_info)
         self.work_rate = work_rate
-
-        
-        self.task_amount_done = 0.0        
+        self.task_amount_done = 0.0
+        self.group_leader_priority = 0
+        self.leader = False
 
     def draw(self, screen):
         size = 10
