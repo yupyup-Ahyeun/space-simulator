@@ -7,9 +7,13 @@ from modules.base_bt_nodes import BTNodeList, Status, Node, Sequence, Fallback, 
 BTNodeList.ACTION_NODES.append('TaskExecutingNode')
 BTNodeList.ACTION_NODES.append('ExplorationNode')
 BTNodeList.ACTION_NODES.append('ReturnToBaseNode')
+
+BTNodeList.ACTION_NODES.append('SeparateSlaveNode')
 BTNodeList.ACTION_NODES.append('GroupMakingNode')
-BTNodeList.ACTION_NODES.append('GroupReleasingNode')
 BTNodeList.ACTION_NODES.append('GroupCheckingNode')
+BTNodeList.ACTION_NODES.append('GroupReleasingNode')
+BTNodeList.ACTION_NODES.append('FollowLeaderNode')
+
 
 
 # Scenario-specific Action/Condition Nodes
@@ -93,72 +97,41 @@ class ReturnToBaseNode(SyncAction):
 
         # If the task is not completed, return ``FAILURE`` to allow the rest of the BT to continue
         return Status.FAILURE
-    
 
+
+class SeparateSlaveNode(SyncAction):
+    def __init__(self, name, agent):
+        super().__init__(name, self._check_agent)
+
+    def _check_agent(self, agent, blackboard):
+        # circular import 막기 위해 여기에 import
+        from scenarios.simple.agent import Agent, LeaderAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
+        
+        # Check if the agent is a LeaderAgent or just an Agent
+        if isinstance(agent, LeaderAgent):
+            return Status.SUCCESS
+        elif isinstance(agent, Agent):
+            return Status.FAILURE
+
+# class SeperateSlaveNode(SyncAction):
+#     def __init__(self, name, agent):
+#         super().__init__(name, self._check_agent)
+
+#     def _check_agent(self, agent, blackboard):
+#         return Status.SUCCESS
+   
 class GroupMakingNode(SyncAction):
     def __init__(self, name, agent):
-        super().__init__(name, self._make_group)
-
-    def _make_group(self, agent, blackboard):
-        agent.group_leader_priority = 1
-        agent.leader = True
-        print("make")
-        return Status.RUNNING
-
-
-# class GroupMakingNode(SyncAction):
-#     def __init__(self, name, agent):
-#         super().__init__(name, self._make_group)
-#         # 에이전트의 초기 상태
-#         self.group_leader_priority = random.randint(1, 5)  # 1~5 범위의 랜덤 값
-#         self.leader = True  # 초기 상태는 모두 리더
-#         self.group_members = []  # 그룹에 속한 멤버 (리더일 경우만 사용)
-
-#     def _make_group(self, agent, blackboard):
-#         # 인접 에이전트를 감지
-#         nearby_agents = agent.get_agents_nearby()
-        
-#         for other_agent in nearby_agents:
-#             # 그룹 리더 우선순위를 비교
-#             if self.group_leader_priority > other_agent.group_leader_priority:
-#                 other_agent.leader = False  # 다른 에이전트를 slave로 전환
-#                 other_agent.group_leader_priority = 0  # slave의 리더 우선순위 제거
-#                 if self.leader:  # 현재 에이전트가 리더라면 멤버 추가
-#                     if other_agent not in self.group_members:   # 다른 leader의 slave가 아닐 때만 slave로 전환
-#                         self.group_members.append(other_agent)
-#             elif self.group_leader_priority < other_agent.group_leader_priority:
-#                 # 현재 에이전트가 slave로 전환
-#                 self.leader = False
-#                 self.group_leader_priority = 0
-#                 # 멤버 정보는 리더에게 종속되므로 초기화
-#                 self.group_members = []
-#                 return Status.SUCCESS
-
-#         # 리더는 slave 에이전트를 통제
-#         if self.leader:
-#             for member in self.group_members:
-#                 # 리더의 움직임과 작업을 멤버들에게 전달
-#                 member.follow(agent.position)
-#                 member.assigned_task_id = agent.assigned_task_id
-
-#         return Status.RUNNING
-
-
-
-# class GroupMakingNode(SyncAction):
-#     def __init__(self, name, agent):
-#         super().__init__(name, self._make_group)
- 
-#     def _make_group(self, agent, blackboard):
-#         return Status.RUNNING
+        super().__init__(name, self._make_group_test)
+    def _make_group_test(self, agent, blackboard):
+        return Status.SUCCESS
 
 class GroupCheckingNode(SyncAction):
     def __init__(self, name, agent):
-        super().__init__(name, self._group_checking)
-    
-    def _group_checking(self, agent, blackboard):
-        return Status.FAILURE
-        # return Status.SUCCESS
+        super().__init__(name, self._check_group)
+
+    def _check_group(self, agent, blackboard):
+        return Status.SUCCESS #FAILURE
 
 class GroupReleasingNode(SyncAction):
     def __init__(self, name, agent):
@@ -166,3 +139,12 @@ class GroupReleasingNode(SyncAction):
 
     def _release_group(self, agent, blackboard):
         return Status.SUCCESS
+
+class FollowLeaderNode(SyncAction):
+    def __init__(self, name, agent):
+        super().__init__(name, self._follow_leader)
+
+    def _follow_leader(self, agent, blackboard):
+        return Status.SUCCESS
+
+

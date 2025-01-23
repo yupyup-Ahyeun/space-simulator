@@ -16,8 +16,6 @@ class Agent(BaseAgent):
         super().__init__(agent_id, position, tasks_info)
         self.work_rate = work_rate
         self.task_amount_done = 0.0
-        self.group_leader_priority = 0
-        self.leader = False
 
     def draw(self, screen):
         size = 10
@@ -35,6 +33,12 @@ class Agent(BaseAgent):
         self.color = task_colors.get(self.assigned_task_id, (20, 20, 20))  # Default to Dark Grey if no task is assigned
 
 
+class LeaderAgent(Agent):
+    def __init__(self, agent_id, position, tasks_info):
+        super().__init__(agent_id, position, tasks_info)
+        self.slave_list = []  # Initialize slave list as an empty list
+        self.group_leader_priority = 0
+
 
 def generate_agents(tasks_info):
     agent_quantity = config['agents']['quantity']
@@ -47,8 +51,15 @@ def generate_agents(tasks_info):
                                       agent_locations['y_max'],
                                       radius=agent_locations['non_overlap_radius'])
 
-    # Initialize agents
-    agents = [Agent(idx, pos, tasks_info) for idx, pos in enumerate(agents_positions)]
+     # Initialize agents with a chance of creating LeaderAgent
+    leader_agent_quantity = config['agents']['leader_agent_quantity']  # The number of leaders to create at the start
+    agents = []
+
+    for idx, pos in enumerate(agents_positions):
+        if idx < leader_agent_quantity:
+            agents.append(LeaderAgent(idx, pos, tasks_info))  # First few are LeaderAgents
+        else:
+            agents.append(Agent(idx, pos, tasks_info))  # Others are regular Agents
 
     # Provide the global info and create behavior tree
     for agent in agents:

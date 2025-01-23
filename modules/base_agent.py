@@ -247,6 +247,7 @@ class BaseAgent:
 
     def set_assigned_task_id(self, task_id):
         self.assigned_task_id = task_id
+        # print(f"On agent:{self.assigned_task_id}")
 
     def set_planned_tasks(self, task_list): # This is for visualisation
         self.planned_tasks = task_list    
