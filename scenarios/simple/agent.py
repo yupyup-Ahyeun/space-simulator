@@ -37,7 +37,12 @@ class LeaderAgent(Agent):
     def __init__(self, agent_id, position, tasks_info):
         super().__init__(agent_id, position, tasks_info)
         self.slave_list = []  # Initialize slave list as an empty list
-        self.group_leader_priority = 0
+        # self.group_leader_priority = 0
+
+class SlaveAgent(Agent):
+    def __init__(self, agent_id, position, tasks_info):
+        super().__init__(agent_id, position, tasks_info)
+        self.leader_id = None  # Initialize leader as an empty list
 
 
 def generate_agents(tasks_info):
@@ -59,7 +64,7 @@ def generate_agents(tasks_info):
         if idx < leader_agent_quantity:
             agents.append(LeaderAgent(idx, pos, tasks_info))  # First few are LeaderAgents
         else:
-            agents.append(Agent(idx, pos, tasks_info))  # Others are regular Agents
+            agents.append(SlaveAgent(idx, pos, tasks_info))  # Others are regular Agents
 
     # Provide the global info and create behavior tree
     for agent in agents:

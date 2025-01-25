@@ -105,46 +105,116 @@ class SeparateSlaveNode(SyncAction):
 
     def _check_agent(self, agent, blackboard):
         # circular import 막기 위해 여기에 import
-        from scenarios.simple.agent import Agent, LeaderAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
+        from scenarios.simple.agent import LeaderAgent, SlaveAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
         
-        # Check if the agent is a LeaderAgent or just an Agent
+        # leader인지 slave인지에 따라 성공/실패 적용하여 BT 분리
         if isinstance(agent, LeaderAgent):
             return Status.SUCCESS
-        elif isinstance(agent, Agent):
+        elif isinstance(agent, SlaveAgent):
             return Status.FAILURE
 
-# class SeperateSlaveNode(SyncAction):
-#     def __init__(self, name, agent):
-#         super().__init__(name, self._check_agent)
 
-#     def _check_agent(self, agent, blackboard):
-#         return Status.SUCCESS
-   
 class GroupMakingNode(SyncAction):
     def __init__(self, name, agent):
-        super().__init__(name, self._make_group_test)
-    def _make_group_test(self, agent, blackboard):
+        super().__init__(name, self._make_group)
+    
+    def _make_group(self, agent, blackboard):
+        # circular import 막기 위해 여기에 import
+        from scenarios.simple.agent import SlaveAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
+
+        # 주변 에이전트 가져오기
+        nearby_agents = agent.get_agents_nearby()
+        
+        for nearby_agent in nearby_agents:
+            # nearby_agent 중 slave인 agent에게만 다음 로직을 적용
+            if not isinstance(nearby_agent, SlaveAgent):
+                continue
+            
+            # 이미 다른 leader를 가진 slave에게만 다음 로직을 적용
+            if nearby_agent.leader_id is not None:
+                continue
+            
+            # leader의 id를 slave의 leader_id에 저장
+            nearby_agent.leader_id = agent.agent_id
+            
+            # leader의 slave_list에 slave의 id 추가
+            if nearby_agent.agent_id not in agent.slave_list:
+                agent.slave_list.append(nearby_agent.agent_id)
+
         return Status.SUCCESS
+
 
 class GroupCheckingNode(SyncAction):
     def __init__(self, name, agent):
         super().__init__(name, self._check_group)
 
     def _check_group(self, agent, blackboard):
-        return Status.SUCCESS #FAILURE
 
-class GroupReleasingNode(SyncAction):
-    def __init__(self, name, agent):
-        super().__init__(name, self._release_group)
+        #TODO: task에 맞게 slave 개수를 지정하는 로직으로 업데이트 필요
+        #TODO: slave들이 leader와 일정 거리 내에 있을 때 task 수행 시작할 수 있도록 업데이트 필요
 
-    def _release_group(self, agent, blackboard):
-        return Status.SUCCESS
+        # leader의 slave_list 확인  
+        if len(agent.slave_list) > 0:
+            return Status.SUCCESS  # slave가 하나 이상 있으면 성공
+        else:
+            return Status.FAILURE  # slave가 없으면 실패
+
 
 class FollowLeaderNode(SyncAction):
     def __init__(self, name, agent):
         super().__init__(name, self._follow_leader)
 
     def _follow_leader(self, agent, blackboard):
+        # leader의 GroupMakingNode에서 slave에게 저장했던 leader id 호출
+        leader_id = agent.leader_id
+        
+        if not leader_id:
+            return Status.FAILURE  # leader가 없으면 실패
+        
+        # nearby_agents 중에서 leader id와 일치하는 id를 가진 agent를 찾아 leader_agent로 지정
+        nearby_agents = agent.get_agents_nearby()
+        
+        leader_agent = next((a for a in nearby_agents if a.agent_id == leader_id), None)
+
+        if not leader_agent:
+            return Status.FAILURE   # 일치하는 leader_agent가 없으면 실패
+        
+        # leader의 task 가져와서 assign하기
+        assigned_task_id = leader_agent.assigned_task_id
+
+        if assigned_task_id is None:
+            return Status.FAILURE  # task가 없으면 실패
+        
+        agent.assigned_task_id = assigned_task_id
+        
+        # assign한 task로 이동
+        task_position = agent.tasks_info[assigned_task_id].position
+        agent.follow(task_position)
+        
+        return Status.RUNNING
+
+
+class GroupReleasingNode(SyncAction):
+    def __init__(self, name, agent):
+        super().__init__(name, self._release_group)
+
+    def _release_group(self, agent, blackboard):
+        # circular import 막기 위해 여기에 import
+        from scenarios.simple.agent import SlaveAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
+
+        # slave_list에 있는 모든 slave들의 leader_id 초기화
+        for slave_id in agent.slave_list:
+            slave_agent = next((a for a in agent.agents_info if a.agent_id == slave_id), None)
+            if slave_agent and isinstance(slave_agent, SlaveAgent):
+                slave_agent.leader_id = None
+
+        # leader의 slave_list 초기화
+        agent.slave_list.clear()
+
         return Status.SUCCESS
+
+        
+
+
 
 

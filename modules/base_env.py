@@ -1,6 +1,7 @@
 import pygame
 import importlib
 from modules.utils import pre_render_text, ResultSaver
+from scenarios.simple.agent import LeaderAgent, SlaveAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
 
 class BaseEnv:
     def __init__(self, config):
@@ -114,6 +115,20 @@ class BaseEnv:
                 agent.draw_communication_topology(self.screen, self.agents)
 
         # Draw agents
+
+        font = pygame.font.SysFont("Arial", 10)  # 텍스트 렌더링용 폰트
+        for agent in self.agents:
+            if isinstance(agent, LeaderAgent):
+                # 리더의 slave_list 표시
+                slave_list_text = f"Leader {agent.agent_id} slaves: {agent.slave_list}"
+                text_surface = font.render(slave_list_text, True, (0, 0, 255))  # leader가 가진 정보는 파란색 텍스트
+                self.screen.blit(text_surface, (agent.position.x + 15, agent.position.y + 15))
+            elif isinstance(agent, SlaveAgent):
+                # 슬레이브의 leader_id 표시
+                leader_text = f"Slave {agent.agent_id} leader: {agent.leader_id}"
+                text_surface = font.render(leader_text, True, (255, 0, 0))  # slave가 가진 정보는 빨간색 텍스트
+                self.screen.blit(text_surface, (agent.position.x + 15, agent.position.y + 30))
+
         for agent in self.agents:                    
             if self.rendering_options.get('agent_path_to_assigned_tasks'): # Draw each agent's path to its assigned tasks
                 agent.draw_path_to_assigned_tasks(self.screen)                    

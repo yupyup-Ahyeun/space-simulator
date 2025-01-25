@@ -29,10 +29,10 @@ decision_making: # Case 3
 
 agents:
   behavior_tree_xml: my_bt_rev_03.xml
-  quantity: 10
+  quantity: 20
   leader_agent_quantity: 5 # 총 agents quantity보다 작아야 함
   locations:
-    x_min: 0
+    x_min: 700
     x_max: 1000
     y_min: 0
     y_max: 700
@@ -44,26 +44,26 @@ agents:
   work_rate: 0.2  # work rate for each agent (per 1.0/simulation.sampling_freq)
   communication_radius: 500 # 0 represents "global", meaning that each agent can access to the information of all the other agents
   situation_awareness_radius: 500 # 0 represents "global", meaning that each agent can access to the information of all the tasks
-  random_exploration_duration: 1000.0 # sec
+  random_exploration_duration: 500.0 # sec
   
 
 tasks:
-  quantity: 20
+  quantity: 10
   locations:
     x_min: 0
     x_max: 1400
     y_min: 0
     y_max: 1000
     non_overlap_radius: 0
-  threshold_done_by_arrival: 10.0
+  threshold_done_by_arrival: 0.1
   amounts:  # Added amounts range for tasks
-    min: 70.0
-    max: 100.0      
+    min: 50.0
+    max: 70.0      
   dynamic_task_generation:
     enabled: True
     interval_seconds: 500
     max_generations: 3
-    tasks_per_generation: 20
+    tasks_per_generation: 10
 
 simulation:
   sampling_freq: 1.0 

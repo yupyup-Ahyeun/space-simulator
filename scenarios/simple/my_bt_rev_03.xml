@@ -5,7 +5,10 @@
       <Sequence>
         <SeparateSlaveNode/>
         <Fallback>
-          <ReturnToBaseNode/>
+          <Sequence>
+            <ReturnToBaseNode/>
+            <GroupReleasingNode/>
+          </Sequence>
           <Sequence>
             <LocalSensingNode/>
             <Fallback>
@@ -23,11 +26,17 @@
         </Fallback>
       </Sequence>
       <Fallback>
+        <ReturnToBaseNode/>
         <Sequence>
-          <FollowLeaderNode/>
-          <TaskExecutingNode/>
+          <LocalSensingNode/>
+          <Fallback>
+            <Sequence>
+              <FollowLeaderNode/>
+              <TaskExecutingNode/>
+            </Sequence>
+            <ExplorationNode/>
+          </Fallback>
         </Sequence>
-        <ExplorationNode/>
       </Fallback>
     </Fallback>
   </BehaviorTree>
@@ -43,6 +52,8 @@
     <Action ID="GroupCheckingNode"
             editable="true"/>
     <Action ID="GroupMakingNode"
+            editable="true"/>
+    <Action ID="GroupReleasingNode"
             editable="true"/>
     <Action ID="LocalSensingNode"
             editable="true"/>
