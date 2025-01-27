@@ -7,13 +7,11 @@ from modules.base_bt_nodes import BTNodeList, Status, Node, Sequence, Fallback, 
 BTNodeList.ACTION_NODES.append('TaskExecutingNode')
 BTNodeList.ACTION_NODES.append('ExplorationNode')
 BTNodeList.ACTION_NODES.append('ReturnToBaseNode')
-
 BTNodeList.ACTION_NODES.append('SeparateSlaveNode')
 BTNodeList.ACTION_NODES.append('GroupMakingNode')
 BTNodeList.ACTION_NODES.append('GroupCheckingNode')
 BTNodeList.ACTION_NODES.append('GroupReleasingNode')
 BTNodeList.ACTION_NODES.append('FollowLeaderNode')
-
 
 
 # Scenario-specific Action/Condition Nodes
@@ -112,34 +110,57 @@ class SeparateSlaveNode(SyncAction):
             return Status.SUCCESS
         elif isinstance(agent, SlaveAgent):
             return Status.FAILURE
-
+        
 
 class GroupMakingNode(SyncAction):
     def __init__(self, name, agent):
         super().__init__(name, self._make_group)
-    
+
     def _make_group(self, agent, blackboard):
         # circular import 막기 위해 여기에 import
         from scenarios.simple.agent import SlaveAgent  # 나중에 경로 수정 필요... simple base로 만들어졌기 때문에 지금은 simple 폴더임.
 
-        # 주변 에이전트 가져오기
-        nearby_agents = agent.get_agents_nearby()
+        # task amount와 task-agent ratio에 따른 slave_limit 계산
+        task_agent_ratio = config['tasks']['task_agent_ratio']
+        assigned_task_id = agent.assigned_task_id
         
-        for nearby_agent in nearby_agents:
-            # nearby_agent 중 slave인 agent에게만 다음 로직을 적용
-            if not isinstance(nearby_agent, SlaveAgent):
-                continue
-            
-            # 이미 다른 leader를 가진 slave에게만 다음 로직을 적용
-            if nearby_agent.leader_id is not None:
-                continue
-            
-            # leader의 id를 slave의 leader_id에 저장
-            nearby_agent.leader_id = agent.agent_id
-            
-            # leader의 slave_list에 slave의 id 추가
-            if nearby_agent.agent_id not in agent.slave_list:
-                agent.slave_list.append(nearby_agent.agent_id)
+        if agent.tasks_info is not None and assigned_task_id is not None:
+            task = agent.tasks_info[assigned_task_id]
+        
+            task_amount = task.amount
+        
+            # task amount에 따라 slave limit 설정
+            if task_amount is not None:
+                agent.slave_limit = int(task_amount * task_agent_ratio)
+
+
+        # slave_limit만큼 slave_list에 slave 추가
+        if agent.slave_limit is not None:
+
+            if len(agent.slave_list) == agent.slave_limit:
+                return Status.SUCCESS  # slave_limit 도달 시 그룹 형성 완료로 간주
+
+            nearby_agents = agent.get_agents_nearby()
+
+            if len(agent.slave_list) < agent.slave_limit:
+                for nearby_agent in nearby_agents:
+
+                    # nearby_agent 이미 다른 leader를 가지고 있지 않은 slave에게만 다음 로직을 적용
+                    if not isinstance(nearby_agent, SlaveAgent):
+                        continue
+                    if nearby_agent.leader_id is not None:
+                        continue
+
+                    # slave에게 leader 배정
+                    nearby_agent.leader_id = agent.agent_id
+
+                    # leader의 slave_list에 slave 추가
+                    if nearby_agent.agent_id not in agent.slave_list:
+                        agent.slave_list.append(nearby_agent.agent_id)
+
+                    # 조건 만족시 성공
+                    if len(agent.slave_list) == agent.slave_limit:
+                        return Status.SUCCESS
 
         return Status.SUCCESS
 
@@ -147,15 +168,13 @@ class GroupMakingNode(SyncAction):
 class GroupCheckingNode(SyncAction):
     def __init__(self, name, agent):
         super().__init__(name, self._check_group)
-
     def _check_group(self, agent, blackboard):
 
-        #TODO: task에 맞게 slave 개수를 지정하는 로직으로 업데이트 필요
         #TODO: slave들이 leader와 일정 거리 내에 있을 때 task 수행 시작할 수 있도록 업데이트 필요
 
         # leader의 slave_list 확인  
-        if len(agent.slave_list) > 0:
-            return Status.SUCCESS  # slave가 하나 이상 있으면 성공
+        if len(agent.slave_list) == agent.slave_limit:
+            return Status.SUCCESS  # slave 조건 충족하면 성공
         else:
             return Status.FAILURE  # slave가 없으면 실패
 
@@ -165,7 +184,7 @@ class FollowLeaderNode(SyncAction):
         super().__init__(name, self._follow_leader)
 
     def _follow_leader(self, agent, blackboard):
-        # leader의 GroupMakingNode에서 slave에게 저장했던 leader id 호출
+        # leader의 GroupMakingNode를 통해 slave에 저장했던 leader id 호출
         leader_id = agent.leader_id
         
         if not leader_id:
@@ -211,10 +230,42 @@ class GroupReleasingNode(SyncAction):
         # leader의 slave_list 초기화
         agent.slave_list.clear()
 
+        # leader의 slave_limit 초기화
+        agent.slave_limit = None
+
         return Status.SUCCESS
 
-        
 
 
 
 
+
+
+
+
+
+
+### 나중에 오버라이딩 해야할 수도 있을 것 같아서 꺼내둠 ###
+#TODO: slave들이 leader와 일정 거리 내에 있을 때 task 수행 시작할 수 있도록 업데이트 필요
+
+# Load additional configuration and import decision-making class dynamically
+import importlib
+decision_making_module_path = config['decision_making']['plugin']
+module_path, class_name = decision_making_module_path.rsplit('.', 1)
+decision_making_module = importlib.import_module(module_path)
+decision_making_class = getattr(decision_making_module, class_name)
+
+class DecisionMakingNode(SyncAction):
+
+    def __init__(self, name, agent):
+        super().__init__(name, self._decide)
+        self.decision_maker = decision_making_class(agent)
+
+    def _decide(self, agent, blackboard):
+        assigned_task_id = self.decision_maker.decide(blackboard)      
+        agent.set_assigned_task_id(assigned_task_id)  
+        blackboard['assigned_task_id'] = assigned_task_id
+        if assigned_task_id is None:            
+            return Status.FAILURE        
+        else:                      
+            return Status.SUCCESS

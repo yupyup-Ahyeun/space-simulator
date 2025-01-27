@@ -37,12 +37,12 @@ class LeaderAgent(Agent):
     def __init__(self, agent_id, position, tasks_info):
         super().__init__(agent_id, position, tasks_info)
         self.slave_list = []  # Initialize slave list as an empty list
-        # self.group_leader_priority = 0
+        self.slave_limit = None # Initialize slave_list_limit
 
 class SlaveAgent(Agent):
     def __init__(self, agent_id, position, tasks_info):
         super().__init__(agent_id, position, tasks_info)
-        self.leader_id = None  # Initialize leader as an empty list
+        self.leader_id = None  # Initialize leader
 
 
 def generate_agents(tasks_info):

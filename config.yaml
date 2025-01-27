@@ -48,7 +48,7 @@ agents:
   
 
 tasks:
-  quantity: 10
+  quantity: 15
   locations:
     x_min: 0
     x_max: 1400
@@ -57,13 +57,14 @@ tasks:
     non_overlap_radius: 0
   threshold_done_by_arrival: 0.1
   amounts:  # Added amounts range for tasks
-    min: 50.0
-    max: 70.0      
+    min: 30.0
+    max: 70.0
+  task_agent_ratio: 0.05 # 한 task를 처리할 때 amount * ratio 만큼의 agent가 필요하게 된다(소수점은 버림).
   dynamic_task_generation:
     enabled: True
     interval_seconds: 500
     max_generations: 3
-    tasks_per_generation: 10
+    tasks_per_generation: 15
 
 simulation:
   sampling_freq: 1.0 
