@@ -1,8 +1,7 @@
 from modules.base_env import BaseEnv
 from modules.utils import ResultSaver
-from scenarios.simple.task import generate_tasks
-from scenarios.simple.agent import generate_agents
-import pygame
+from scenarios.collaborative_transport.task import generate_tasks
+from scenarios.collaborative_transport.agent import generate_agents
 
 class Env(BaseEnv):
     def __init__(self, config):
@@ -66,3 +65,20 @@ class Env(BaseEnv):
             tasks_total_amount_left
         ])        
                   
+    # base_env.py의 step() 오버라이드 되었음
+    async def step(self):
+        # Main simulation loop logic
+        for agent in self.agents:
+            await agent.run_tree()
+            agent.update()
+
+        for task in self.tasks:
+
+            if task.task_type == "block" and task.completed and len(task.arrived_agent_set) != 0:
+                """ at task position or vertex point """
+                task.initialize_position_to_center(self.agents)
+                
+                """ around task position """
+                # task.initialize_position_to_direction(self.agents)
+            
+        self.update_simulation()
