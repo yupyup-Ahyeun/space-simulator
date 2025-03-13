@@ -161,6 +161,13 @@ class GRAPE:
 
                 _satisfied = False
         
+                _assigned_task = self.get_assigned_task_from_partition(_partition)
+                if _assigned_task is not None and self.assigned_task is not None:
+                    if _assigned_task.task_id == self.assigned_task.task_id:
+                        
+                        _satisfied = True
+                   
+        
         _final_partition = {k: v.copy() for k, v in _partition.items()}
         return _evolution_number, _time_stamp, _final_partition, _satisfied
                 
