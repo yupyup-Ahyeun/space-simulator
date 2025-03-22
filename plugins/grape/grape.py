@@ -31,6 +31,7 @@ class GRAPE:
             'evolution_number': self.evolution_number,
             'time_stamp': self.time_stamp
             } 
+        self.decision_iteration = 0
 
 
     def initialize_partition_by_distance(self, agents_info, tasks_info, partition):
@@ -62,6 +63,7 @@ class GRAPE:
             self.partition[self.assigned_task.task_id] = set()  # Empty the previous task's coalition                  
             self.assigned_task = None
             self.satisfied = False
+            self.decision_iteration = 0
             
             # Special routine
             if REINITIALIZE_PARTITION == "Distance":                                    
@@ -84,7 +86,10 @@ class GRAPE:
                 self.evolution_number += 1
                 self.time_stamp = random.uniform(0, 1)                   
             
-            self.satisfied = True
+            ### Phase 반복 조건
+            self.decision_iteration += 1
+            if self.decision_iteration >= 2:
+                self.satisfied = True
 
             # Broadcasting # NOTE: Implemented separately
             self.agent.message_to_share = {
@@ -98,10 +103,19 @@ class GRAPE:
 
         
         # D-Mutex (Phase 2)            
-        self.evolution_number, self.time_stamp, self.partition, self.satisfied = self.distributed_mutex(self.agent.messages_received)                
+        self.evolution_number, self.time_stamp, self.partition, temp_satisfied = self.distributed_mutex(self.agent.messages_received)                
         self.agent.reset_messages_received()
 
         self.assigned_task = self.get_assigned_task_from_partition(self.partition)        
+
+        ### Phase 반복 조건 만족 여부 체크해서 초기화
+        if temp_satisfied:
+            self.decision_iteration += 1
+            if self.decision_iteration >= 2:
+                self.satisfied = True
+        else:
+            self.satisfied = False
+            self.decision_iteration = 0
 
         if not self.satisfied:
             if not KEEP_MOVING_DURING_CONVERGENCE:
