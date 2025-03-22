@@ -1,5 +1,6 @@
 import random
 import copy
+import math
 from modules.utils import config, pre_render_text
 
 KEEP_MOVING_DURING_CONVERGENCE = config['decision_making']['GRAPE'].get('execute_movements_during_convergence', False)
@@ -143,8 +144,33 @@ class GRAPE:
         if self.agent.agent_id not in self.partition[task.task_id]:
             num_collaborator += 1
 
-        distance = (self.agent.position - task.position).length()              
-        utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
+        distance = (self.agent.position - task.position).length()  
+        remaining_sides = task.num_sides - len(task.assigned_agent_set)            
+
+
+        """original utility"""              
+        # utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
+
+        """reversed utility"""
+        # if remaining_sides <= 0:
+        #     utility = float('-inf')
+        # else:
+        #     utility = task.amount * num_collaborator
+
+        """reversed utility with distance"""
+        # if remaining_sides <= 0:
+        #     utility = float('-inf')
+        # else:
+        #     utility = task.amount * num_collaborator - COST_WEIGHT_FACTOR * distance
+
+        """collabotive utility"""
+        if remaining_sides == 0:
+            log_value = float('-inf')
+        else:
+            log_value = abs(math.log(remaining_sides, task.num_sides))
+
+        utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * abs(log_value)
+
         return utility
 
     def distributed_mutex(self, messages_received):        
