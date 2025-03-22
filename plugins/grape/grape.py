@@ -178,12 +178,11 @@ class GRAPE:
         #     utility = task.amount * num_collaborator - COST_WEIGHT_FACTOR * distance
 
         """collabotive utility"""
-        if remaining_sides == 0:
-            log_value = float('-inf')
+        if remaining_sides <= 0:
+            utility = float('-inf')
         else:
-            log_value = abs(math.log(remaining_sides, task.num_sides))
-
-        utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * abs(log_value)
+            log_value = math.log(remaining_sides, task.num_sides)
+            utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * abs(log_value)
 
         return utility
 
