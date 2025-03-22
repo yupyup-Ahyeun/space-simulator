@@ -182,7 +182,7 @@ class GRAPE:
             utility = float('-inf')
         else:
             log_value = math.log(remaining_sides, task.num_sides)
-            utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * abs(log_value)
+            utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * log_value
 
         return utility
 
