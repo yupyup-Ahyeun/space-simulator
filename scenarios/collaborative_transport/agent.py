@@ -7,6 +7,8 @@ from scenarios.collaborative_transport.task import task_colors
 
 # Load agent configuration (Scenario Specific)
 work_rate = config['agents']['work_rate']
+sampling_freq = config['simulation']['sampling_freq']
+sampling_time = 1.0 / sampling_freq  # in seconds
 
 # Load behavior tree
 behavior_tree_xml = f"{os.path.dirname(os.path.abspath(__file__))}/{config['agents']['behavior_tree_xml']}"
@@ -20,6 +22,12 @@ class Agent(BaseAgent):
         self.task_amount_done = 0.0
         self.target_vertex_idx = None
         self.task_color_id = None
+
+        self.cumulative_waiting_time = 0
+        self.waiting_now = False
+
+    def update_cumulative_waiting_time(self):
+        self.cumulative_waiting_time += sampling_time
 
     def set_target_vertex_idx(self, target_vertex_idx):
         self.target_vertex_idx = target_vertex_idx
