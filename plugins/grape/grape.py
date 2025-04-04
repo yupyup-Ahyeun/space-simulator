@@ -250,7 +250,7 @@ class GRAPE:
         # else:
         #     utility = task.amount * num_collaborator - COST_WEIGHT_FACTOR * distance
 
-        """collabotive utility"""
+        """collaborative utility"""
         # if remaining_sides <= 0:
         #     utility = float('-inf')
         # else:
