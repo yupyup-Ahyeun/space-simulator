@@ -149,12 +149,16 @@ class WaitAgents(SyncAction):
 
     def _update(self, agent, blackboard):
         if not agent.waiting_now:
-            agent.waiting_now = True 
-        agent.update_cumulative_waiting_time()
+            agent.waiting_now = True
+
+        if agent.waiting_now:
+            agent.update_waiting_time()
+            agent.update_cumulative_waiting_time()
         return Status.RUNNING
 
     def halt(self):
         self.agent.waiting_now = False
+        self.agent.update_waiting_time()
 
 
 # base_bt_nodes.py의 GatherLocalInfo()가 오버라이드 되었음
