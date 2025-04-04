@@ -159,6 +159,8 @@ class WaitAgents(SyncAction):
     def halt(self):
         self.agent.waiting_now = False
         self.agent.update_waiting_time()
+        self.advantaged_task_id = None
+        self.penalized_task_ids = None
 
 
 # base_bt_nodes.py의 GatherLocalInfo()가 오버라이드 되었음
