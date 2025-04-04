@@ -23,8 +23,15 @@ class Agent(BaseAgent):
         self.target_vertex_idx = None
         self.task_color_id = None
 
+        self.waiting_time = 0
         self.cumulative_waiting_time = 0
         self.waiting_now = False
+
+    def update_waiting_time(self):
+        if self.waiting_now:
+            self.waiting_time += sampling_time
+        else:
+            self.waiting_time = 0
 
     def update_cumulative_waiting_time(self):
         self.cumulative_waiting_time += sampling_time
