@@ -8,6 +8,7 @@ INITIALIZE_PARTITION = config['decision_making']['GRAPE']['initialize_partition'
 REINITIALIZE_PARTITION = config['decision_making']['GRAPE']['reinitialize_partition_on_completion']
 COST_WEIGHT_FACTOR = config['decision_making']['GRAPE']['cost_weight_factor']
 SOCIAL_INHIBITION_FACTOR = config['decision_making']['GRAPE']['social_inhibition_factor']
+WAITING_TIME_LIMIT = 1700   # 임시로 지정
 
 class GRAPE:
     def __init__(self, agent):
@@ -85,7 +86,7 @@ class GRAPE:
         """waiting time 제한으로 phase 재시작"""
         if self.penalized_task_ids:
             for penalized_task_id in self.penalized_task_ids:
-                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == 1800:
+                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
                     self.decision_iteration = 0
                     self.agent.waiting_now = False
                     self.satisfied = False
@@ -128,7 +129,7 @@ class GRAPE:
         """waiting time 제한으로 phase 재시작"""
         if self.penalized_task_ids:
             for penalized_task_id in self.penalized_task_ids:
-                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == 1800:
+                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
                     self.decision_iteration = 0
                     self.agent.waiting_now = False
                     self.satisfied = False
@@ -222,7 +223,7 @@ class GRAPE:
 
         """waiting time 제한으로 utility switcing"""
         # advantage
-        if task.task_id == self.advantaged_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == 1600:
+        if task.task_id == self.advantaged_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
             # utility = task.amount * num_collaborator
             utility = float('inf')
             return utility
@@ -230,7 +231,7 @@ class GRAPE:
         # penalize
         if self.penalized_task_ids:
             for penalized_task_id in self.penalized_task_ids:
-                if task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == 1600:
+                if task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
                     utility = float('-inf')
                     return utility
             
