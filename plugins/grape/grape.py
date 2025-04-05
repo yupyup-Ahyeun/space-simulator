@@ -33,8 +33,8 @@ class GRAPE:
             'time_stamp': self.time_stamp
             } 
         self.decision_iteration = 0
-        self.advantaged_task_id = None
-        self.penalized_task_ids = None
+        self.run_count_1 = 0
+        self.run_count_2 = 0
 
 
     def initialize_partition_by_distance(self, agents_info, tasks_info, partition):
@@ -82,31 +82,29 @@ class GRAPE:
         if len(_local_tasks_info) == 0:
             return None
         
-        ### 조건부 Phase 재시작
-        """waiting time 제한으로 phase 재시작"""
-        if self.penalized_task_ids:
-            for penalized_task_id in self.penalized_task_ids:
-                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
-                    self.decision_iteration = 0
-                    self.agent.waiting_now = False
-                    self.satisfied = False
+        #### waiting time 제한으로 decide 재시작 for utility switching
+        if self.run_count_1 < 2 and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
+            self.decision_iteration = 0
+            self.agent.waiting_now = False
+            self.satisfied = False
+            self.run_count_1 += 1
 
         if not self.satisfied:            
             _max_task_id, _max_utility = self.find_max_utility_task(_local_tasks_info)
             self.assigned_task = self.get_assigned_task_from_partition(self.partition) 
-
-            self.advantaged_task_id = self.select_task_with_advantage()
-            self.penalized_task_ids = self.select_task_with_penalty()
 
             if _max_utility > self.compute_utility(self.assigned_task):                
                 self.update_partition(_max_task_id)
                 self.evolution_number += 1
                 self.time_stamp = random.uniform(0, 1)                   
             
-            ### Phase 반복 조건
+            ## 수렴 위해 Phase 반복
             self.decision_iteration += 1
             if self.decision_iteration >= 2:
+                self.agent.waiting_now = False
                 self.satisfied = True
+            else:
+                self.satisfied = False
 
             # Broadcasting # NOTE: Implemented separately
             self.agent.message_to_share = {
@@ -118,6 +116,12 @@ class GRAPE:
             
             return None
 
+        #### waiting time 제한으로 decide 재시작 for utility switching
+        if not self.run_count_2 < 2 and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
+            self.decision_iteration = 0
+            self.agent.waiting_now = False
+            self.satisfied = False
+            self.run_count_2 += 1
         
         # D-Mutex (Phase 2)            
         self.evolution_number, self.time_stamp, self.partition, temp_satisfied = self.distributed_mutex(self.agent.messages_received)                
@@ -125,19 +129,11 @@ class GRAPE:
 
         self.assigned_task = self.get_assigned_task_from_partition(self.partition)        
 
-        ### 조건부 Phase 재시작
-        """waiting time 제한으로 phase 재시작"""
-        if self.penalized_task_ids:
-            for penalized_task_id in self.penalized_task_ids:
-                if self.assigned_task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
-                    self.decision_iteration = 0
-                    self.agent.waiting_now = False
-                    self.satisfied = False
-
-        ### Phase 반복 조건 만족 여부 체크해서 초기화
+        ## 수렴 위해 Phase 반복, 조건 만족 여부 체크해서 초기화
         if temp_satisfied:
             self.decision_iteration += 1
             if self.decision_iteration >= 2:
+                self.agent.waiting_now = False
                 self.satisfied = True
         else:
             self.satisfied = False
@@ -175,37 +171,6 @@ class GRAPE:
 
         return _max_task_id, _max_utility
 
-    def select_task_with_advantage(self):   # can pick one task
-        tasks_info = self.agent.tasks_info
-        available_tasks = [task for task in tasks_info if not task.completed and task.task_type == "block" 
-                           and len(task.assigned_agent_set) != task.num_sides 
-                           and task.task_id != self.agent.assigned_task_id]
-
-        if not available_tasks:
-            return None  
-
-        """advantage random"""
-        advantaged_task = min(available_tasks, key=lambda t: t.task_id)
-        advantaged_task_id = advantaged_task.task_id
-
-        return advantaged_task_id
-    
-    def select_task_with_penalty(self):    # can pick multiple tasks
-        advantaged_task_id = self.select_task_with_advantage()
-        tasks_info = self.agent.tasks_info
-        candidate_tasks = [task for task in tasks_info if not task.completed and task.task_type == "block" 
-                           and len(task.assigned_agent_set) != task.num_sides 
-                           and task.task_id != self.agent.assigned_task_id and task.task_id != advantaged_task_id]
-
-        if not candidate_tasks:
-            return None 
-
-        """penalty random except advantaged"""
-        tasks_with_penalty = sorted(candidate_tasks, key=lambda t: t.task_id)[:]
-        penalized_task_ids = [task.task_id for task in tasks_with_penalty]
-        
-        return penalized_task_ids
-
     def compute_utility(self, task): # Individual Utility Function  
         if task is None:
             return float('-inf')
@@ -216,27 +181,27 @@ class GRAPE:
             num_collaborator += 1
 
         distance = (self.agent.position - task.position).length()  
-        remaining_sides = task.num_sides - len(task.assigned_agent_set)            
-
-        self.advantaged_task_id = self.select_task_with_advantage()
-        self.penalized_task_ids = self.select_task_with_penalty()
+        remaining_sides = task.num_sides - len(task.assigned_agent_set)   
+        waiting_time = self.agent.waiting_time         
 
         """waiting time 제한으로 utility switcing"""
-        # advantage
-        if task.task_id == self.advantaged_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
-            # utility = task.amount * num_collaborator
-            utility = float('inf')
-            return utility
+        if waiting_time != 0 and waiting_time == WAITING_TIME_LIMIT:
+     
+            # utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
+            # utility = max(0, utility)
+            # utility = (utility) * (0.999) ** (waiting_time)
 
-        # penalize
-        if self.penalized_task_ids:
-            for penalized_task_id in self.penalized_task_ids:
-                if task.task_id == penalized_task_id and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
-                    utility = float('-inf')
-                    return utility
+            if remaining_sides <= 0:
+                utility = float('-inf')
+            else:
+                utility = task.amount * num_collaborator
+
+            return utility
             
         """original utility"""              
         utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
+        utility = max(0, utility)
+        utility = (utility) * (0.999) ** (waiting_time)
 
         """reversed utility"""
         # if remaining_sides <= 0:
@@ -256,6 +221,11 @@ class GRAPE:
         # else:
         #     log_value = math.log(remaining_sides, task.num_sides)
         #     utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * log_value
+
+        
+        #### waiting time 제한으로 decide 재시작 위한 초기화
+        self.run_count_1 = 0
+        self.run_count_2 = 0
 
         return utility
 
