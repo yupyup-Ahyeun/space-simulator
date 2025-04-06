@@ -151,6 +151,10 @@ class GRAPE:
                 self.satisfied = False
 
             if self.agent.waiting_time > WAITING_TIME_LIMIT and self.agent.waiting_time != 0 and self.agent.waiting_time % WAITING_TIME_LIMIT == 0:
+                self.update_partition(_max_task_id)
+                self.evolution_number += 1
+                self.time_stamp = random.uniform(0, 1)
+
                 self.decision_iteration = 0
                 self.agent.waiting_now = False
                 self.satisfied = False
