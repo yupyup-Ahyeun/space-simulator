@@ -8,7 +8,7 @@ INITIALIZE_PARTITION = config['decision_making']['GRAPE']['initialize_partition'
 REINITIALIZE_PARTITION = config['decision_making']['GRAPE']['reinitialize_partition_on_completion']
 COST_WEIGHT_FACTOR = config['decision_making']['GRAPE']['cost_weight_factor']
 SOCIAL_INHIBITION_FACTOR = config['decision_making']['GRAPE']['social_inhibition_factor']
-WAITING_TIME_LIMIT = 1700   # 임시로 지정
+WAITING_TIME_LIMIT = 1500   # 임시로 지정
 
 class GRAPE:
     def __init__(self, agent):
@@ -33,8 +33,6 @@ class GRAPE:
             'time_stamp': self.time_stamp
             } 
         self.decision_iteration = 0
-        self.run_count_1 = 0
-        self.run_count_2 = 0
 
 
     def initialize_partition_by_distance(self, agents_info, tasks_info, partition):
@@ -82,12 +80,11 @@ class GRAPE:
         if len(_local_tasks_info) == 0:
             return None
         
-        #### waiting time 제한으로 decide 재시작 for utility switching
-        if self.run_count_1 < 2 and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
+        #### 조건부 Phase 재시작
+        """waiting time 제한으로 phase 재시작"""
+        if self.agent.waiting_time > WAITING_TIME_LIMIT and self.agent.waiting_time != 0 and self.agent.waiting_time % WAITING_TIME_LIMIT == 0:
             self.decision_iteration = 0
             self.agent.waiting_now = False
-            self.satisfied = False
-            self.run_count_1 += 1
 
         if not self.satisfied:            
             _max_task_id, _max_utility = self.find_max_utility_task(_local_tasks_info)
@@ -115,13 +112,6 @@ class GRAPE:
                 }
             
             return None
-
-        #### waiting time 제한으로 decide 재시작 for utility switching
-        if not self.run_count_2 < 2 and self.agent.waiting_time != 0 and self.agent.waiting_time == WAITING_TIME_LIMIT:
-            self.decision_iteration = 0
-            self.agent.waiting_now = False
-            self.satisfied = False
-            self.run_count_2 += 1
         
         # D-Mutex (Phase 2)            
         self.evolution_number, self.time_stamp, self.partition, temp_satisfied = self.distributed_mutex(self.agent.messages_received)                
@@ -142,6 +132,17 @@ class GRAPE:
         if not self.satisfied:
             if not KEEP_MOVING_DURING_CONVERGENCE:
                 self.agent.reset_movement()  # Neutralise the agent's current movement during converging to a Nash stable partition
+
+        #### 조건부 Phase 재시작: satisfied 상태이더라도 waiting_time limit에 도달하면 utility switch
+        if self.satisfied and self.agent.waiting_time >= WAITING_TIME_LIMIT:
+            _max_task_id, _max_utility = self.find_max_utility_task(_local_tasks_info)
+            self.assigned_task = self.get_assigned_task_from_partition(self.partition)
+
+            if _max_utility > self.compute_utility(self.assigned_task):
+                self.update_partition(_max_task_id)
+                self.evolution_number += 1
+                self.time_stamp = random.uniform(0, 1)
+                self.satisfied = False
 
         return copy.deepcopy(self.assigned_task.task_id) if self.assigned_task is not None else None
 
@@ -181,17 +182,16 @@ class GRAPE:
             num_collaborator += 1
 
         distance = (self.agent.position - task.position).length()  
-        remaining_sides = task.num_sides - len(task.assigned_agent_set)   
-        waiting_time = self.agent.waiting_time         
+        remaining_sides = task.num_sides - len(task.assigned_agent_set)        
 
         """waiting time 제한으로 utility switcing"""
-        if waiting_time != 0 and waiting_time == WAITING_TIME_LIMIT:
+        if self.agent.waiting_time >= WAITING_TIME_LIMIT:
      
             # utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
             # utility = max(0, utility)
-            # utility = (utility) * (0.999) ** (waiting_time)
-
-            if remaining_sides <= 0:
+            # utility = (utility) * (0.999) ** (self.agent.waiting_time)
+    
+            if task.num_sides < num_collaborator:
                 utility = float('-inf')
             else:
                 utility = task.amount * num_collaborator
@@ -201,31 +201,26 @@ class GRAPE:
         """original utility"""              
         utility = task.amount / (num_collaborator) - COST_WEIGHT_FACTOR * distance * (num_collaborator ** SOCIAL_INHIBITION_FACTOR) 
         utility = max(0, utility)
-        utility = (utility) * (0.999) ** (waiting_time)
+        utility = (utility) * (0.999) ** (self.agent.waiting_time)
 
         """reversed utility"""
-        # if remaining_sides <= 0:
+        # if task.num_sides < num_collaborator:
         #     utility = float('-inf')
         # else:
         #     utility = task.amount * num_collaborator
 
         """reversed utility with distance"""
-        # if remaining_sides <= 0:
+        # if task.num_sides < num_collaborator:
         #     utility = float('-inf')
         # else:
         #     utility = task.amount * num_collaborator - COST_WEIGHT_FACTOR * distance
 
         """collaborative utility"""
-        # if remaining_sides <= 0:
+        # if task.num_sides < num_collaborator:
         #     utility = float('-inf')
         # else:
         #     log_value = math.log(remaining_sides, task.num_sides)
         #     utility = task.amount / num_collaborator - COST_WEIGHT_FACTOR * distance * log_value
-
-        
-        #### waiting time 제한으로 decide 재시작 위한 초기화
-        self.run_count_1 = 0
-        self.run_count_2 = 0
 
         return utility
 
