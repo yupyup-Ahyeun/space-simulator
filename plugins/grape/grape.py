@@ -150,6 +150,11 @@ class GRAPE:
                 self.time_stamp = random.uniform(0, 1)
                 self.satisfied = False
 
+            if self.agent.waiting_time > WAITING_TIME_LIMIT and self.agent.waiting_time != 0 and self.agent.waiting_time % WAITING_TIME_LIMIT == 0:
+                self.decision_iteration = 0
+                self.agent.waiting_now = False
+                self.satisfied = False
+
         return copy.deepcopy(self.assigned_task.task_id) if self.assigned_task is not None else None
 
 
