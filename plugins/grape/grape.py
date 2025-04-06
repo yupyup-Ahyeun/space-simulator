@@ -119,6 +119,12 @@ class GRAPE:
 
         self.assigned_task = self.get_assigned_task_from_partition(self.partition)        
 
+        #### 조건부 Phase 재시작
+        """waiting time 제한으로 phase 재시작"""
+        if self.agent.waiting_time > WAITING_TIME_LIMIT and self.agent.waiting_time != 0 and self.agent.waiting_time % WAITING_TIME_LIMIT == 0:
+            self.decision_iteration = 0
+            self.agent.waiting_now = False
+
         ## 수렴 위해 Phase 반복, 조건 만족 여부 체크해서 초기화
         if temp_satisfied:
             self.decision_iteration += 1
