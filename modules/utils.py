@@ -27,7 +27,10 @@ def pre_render_text(text, font_size, color):
     font = pygame.font.Font(None, font_size)
     return font.render(text, True, color)
 
-def generate_positions(quantity, x_min, x_max, y_min, y_max, radius=10):
+def generate_positions(quantity, x_min, x_max, y_min, y_max, radius=10, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
     positions = []
     while len(positions) < quantity:
         pos = (random.randint(x_min + radius, x_max - radius),
@@ -39,6 +42,15 @@ def generate_positions(quantity, x_min, x_max, y_min, y_max, radius=10):
             positions.append(pos)
     return positions
 
+def generate_random_values(quantity, min, max, seed=None):
+    if seed is not None:
+        random.seed(seed)
+
+    value_list = []
+    while len(value_list) < quantity:
+        _value = random.randint(min, max)
+        value_list.append(_value)
+    return value_list
 
 # Generate task_colors based on tasks.quantity
 def generate_task_colors(quantity):
@@ -102,8 +114,8 @@ class ResultSaver:
         self.df_agentwise_result = None
 
     def generate_output_filename(self, extension = "csv", additional_keyword = None):
-        agent_quantity = config['agents'].get('quantity', 0)
-        task_quantity = config['tasks'].get('quantity', 0)
+        agent_quantity = config['agents']['quantity']
+        task_quantity = config['tasks']['quantity']
         decision_making_module_path = config['decision_making']['plugin']
         module_path, class_name = decision_making_module_path.rsplit('.', 1)
         datetime_now = datetime.datetime.now()
@@ -182,11 +194,11 @@ class ResultSaver:
         df = pd.read_csv(csv_file_path)
         
         # Extract time and data columns
-        time = df['time']
-        agents_total_distance_moved = df['agents_total_distance_moved']
-        agents_total_task_amount_done = df['agents_total_task_amount_done']
-        remaining_tasks = df['remaining_tasks']
-        tasks_total_amount_left = df['tasks_total_amount_left']
+        time = df['time'].values
+        agents_total_distance_moved = df['agents_total_distance_moved'].values
+        agents_total_task_amount_done = df['agents_total_task_amount_done'].values
+        remaining_tasks = df['remaining_tasks'].values
+        tasks_total_amount_left = df['tasks_total_amount_left'].values
 
 
         plt.figure(figsize=(12, 8))

@@ -34,6 +34,26 @@ class Task(BaseTask):
         # for waiting time utility
         self.max_waiting_time = 0.0 
 
+    def get_max_waiting_time(self, agents):
+        max_waiting_time = 0
+        for agent_id in self.ready_agents:
+            waiting_time = agents[agent_id].waiting_time.get(self.task_id, 0.0)
+            if waiting_time > max_waiting_time:
+                max_waiting_time = waiting_time
+
+        return max_waiting_time
+    
+    def get_mean_waiting_time(self, agents):
+        total_waiting_time = 0
+        if len(self.ready_agents) == 0:
+            return 0
+        
+        for agent_id in self.ready_agents:
+            waiting_time = agents[agent_id].waiting_time.get(self.task_id, 0.0)
+            total_waiting_time += waiting_time            
+        
+
+        return total_waiting_time/len(self.ready_agents)
 
     def get_max_waiting_time(self, agents):
         waiting_time_dict = {}
@@ -180,7 +200,7 @@ def get_random_num_sides():
 def get_random_amount():
     return random.uniform(config['tasks']['amounts']['min'], config['tasks']['amounts']['max'])
 
-def generate_tasks(task_quantity=None, task_id_start = 0):
+def generate_tasks(task_quantity=None, task_id_start = 0, seed=None):
     if task_quantity is None:
         task_quantity = config['tasks']['quantity']        
     task_locations = config['tasks']['locations']
@@ -190,14 +210,16 @@ def generate_tasks(task_quantity=None, task_id_start = 0):
                                         task_locations['x_max'],
                                         task_locations['y_min'],
                                         task_locations['y_max'],
-                                        radius=task_locations['non_overlap_radius'])
+                                        radius=task_locations['non_overlap_radius'],
+                                        seed=seed)
     
     slot_tasks_positions = generate_positions(task_quantity // 2,
                                         task_locations['x_min'],
                                         task_locations['x_max'],
                                         task_locations['y_min'],
                                         task_locations['y_max'],
-                                        radius=task_locations['non_overlap_radius'])
+                                        radius=task_locations['non_overlap_radius'],
+                                        seed=seed + 1)
 
     # Initialize tasks
     tasks = []
