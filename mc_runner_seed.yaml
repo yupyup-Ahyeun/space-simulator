@@ -1,0 +1,6 @@
+cases:
+  # GRAPE-CT case 1
+  - config/new_CT_for_seed/a60_case1_tol10_seed1.yaml
+
+num_runs: 1
+seed_ranges: [1,3]

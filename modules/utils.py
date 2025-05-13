@@ -105,8 +105,9 @@ class ObjectToRender:
 
 # Results saving
 class ResultSaver:
-    def __init__(self, config_file_path):
+    def __init__(self, config_file_path, seed=None):  # seed 추가
         self.config_file_path = config_file_path
+        self.seed = seed  # seed 저장
         self.result_file_path = self.generate_output_filename()
         self.timewise_result_file_path = self.generate_output_filename(additional_keyword="timewise")
         self.agentwise_result_file_path = self.generate_output_filename(additional_keyword="agentwise")
@@ -129,10 +130,14 @@ class ResultSaver:
         else:
             output_dir = output_parent_folder        
         os.makedirs(output_dir, exist_ok=True) 
-        if additional_keyword == None:
-            file_path = os.path.join(output_dir, f"{class_name}_a{agent_quantity}_t{task_quantity}_{current_time_string}.{extension}")
+
+        # seed를 파일명에 포함
+        seed_string = f"_seed{self.seed}" if self.seed is not None else ""
+
+        if additional_keyword is None:
+            file_path = os.path.join(output_dir, f"{class_name}_a{agent_quantity}_t{task_quantity}{seed_string}_{current_time_string}.{extension}")
         else:
-            file_path = os.path.join(output_dir, f"{class_name}_a{agent_quantity}_t{task_quantity}_{current_time_string}_{additional_keyword}.{extension}")
+            file_path = os.path.join(output_dir, f"{class_name}_a{agent_quantity}_t{task_quantity}{seed_string}_{current_time_string}_{additional_keyword}.{extension}")
 
         return file_path
 
