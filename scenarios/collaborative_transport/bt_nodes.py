@@ -157,7 +157,7 @@ class AssignTask(_AssignTask):
             blackboard['block_task_id'] = None
             agent.set_color_id(None)
 
-            # 현재 task랑 None이면 이전 task의 set 업데이트(remove)
+            # 현재 task가 None이면 이전 task의 set 업데이트(remove)
             if self.prev_task_id is not None:
                 prev_task = agent.tasks_info[self.prev_task_id]
                 prev_task.remove_from_assigned_agents(agent.agent_id)
