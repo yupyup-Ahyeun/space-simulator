@@ -1,0 +1,79 @@
+image_output_folder: ./results/mc_plot_results/compare_minwCT_n_GRAPE/tol10
+
+x_label: Number of Agents
+x_labels: [10, 20, 30, 40, 50, 60]
+# x_labels_colors: [0, 1, 2, 3, 4, 5, 6]
+
+y_label: Min Waiting Factor
+y_labels: ["GRAPE", "0", "10", "50", "75", "100", "150"]
+y_labels_colors: [0, 1, 2, 3, 4, 5, 6]
+
+
+# 아래 cases 순서 주의: 각 y_label에 대해 x_labels 전체에 해당하는 case 경로가 순서대로 나열되어야 함.
+cases:
+
+  # y_labels[0] * all x_labels
+  # GRAPE
+  - monte_carlo_analysis/data/ct_test/grape/a10/GRAPE_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape/a20/GRAPE_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape/a30/GRAPE_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape/a40/GRAPE_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape/a50/GRAPE_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape/a60/GRAPE_a60_t20
+
+  
+  # GRAPE-CT
+
+  #     y_labels[1] * all x_labels
+  #     miw = 0
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a10/tol10/GRAPE_CT__a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a20/tol10/GRAPE_CT__a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a30/tol10/GRAPE_CT__a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a40/tol10/GRAPE_CT__a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a50/tol10/GRAPE_CT__a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a60/tol10/GRAPE_CT__a60_t20
+
+  #     y_labels[2] * all x_labels
+  #     miw = 10
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol10_minw10/GRAPE_CT_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol10_minw10/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol10_minw10/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol10_minw10/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol10_minw10/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol10_minw10/GRAPE_CT_a60_t20
+
+  #     y_labels[3] * all x_labels
+  #     miw = 50
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol10_minw50/GRAPE_CT_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol10_minw50/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol10_minw50/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol10_minw50/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol10_minw50/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol10_minw50/GRAPE_CT_a60_t20
+
+  #     y_labels[4] * all x_labels
+  #     miw = 75
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol10_minw75/GRAPE_CT_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol10_minw75/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol10_minw75/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol10_minw75/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol10_minw75/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol10_minw75/GRAPE_CT_a60_t20
+
+  #     y_labels[5] * all x_labels
+  #     miw = 100
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol10_minw100/GRAPE_CT_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol10_minw100/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol10_minw100/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol10_minw100/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol10_minw100/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol10_minw100/GRAPE_CT_a60_t20
+
+  #     y_labels[6] * all x_labels
+  #     miw = 150
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol10_minw150/GRAPE_CT_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol10_minw150/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol10_minw150/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol10_minw150/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol10_minw150/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol10_minw150/GRAPE_CT_a60_t20

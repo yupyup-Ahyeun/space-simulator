@@ -1,0 +1,52 @@
+image_output_folder: ./results/table_results
+
+x_labels: [GRAPE, GRAPE-CT, Greedy, LJF]
+y_labels: [10, 20, 30, 40, 50, 60]
+
+
+# 아래 cases 순서 주의: 각 x_label에 대해 y_labels 전체에 해당하는 case 경로가 순서대로 나열되어야 함.
+cases:
+
+  # x_labels[0] * all y_labels
+  # GRAPE
+  - monte_carlo_analysis/data/ct_test/grape/a10/GRAPE_a10_t20
+  - monte_carlo_analysis/data/ct_test/grape/a20/GRAPE_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape/a30/GRAPE_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape/a40/GRAPE_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape/a50/GRAPE_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape/a60/GRAPE_a60_t20
+
+  # x_labels[1] * all y_labels
+  # GRAPE-CT
+  #     tol_minw
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a10/tol1_minw50/GRAPE_CT_a10_t20  # minw = 50, tol = 1로 고정한 경우. (minw는 일단 임의로 지정한 상태)
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a20/tol1_minw50/GRAPE_CT_a20_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a30/tol1_minw50/GRAPE_CT_a30_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a40/tol1_minw50/GRAPE_CT_a40_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a50/tol1_minw50/GRAPE_CT_a50_t20
+  - monte_carlo_analysis/data/ct_test/grape_ct/tol_minw_case/a60/tol1_minw50/GRAPE_CT_a60_t20
+  # #     only tol
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a10/tol1/GRAPE_CT__a10_t20  # minw 없이 tol = 1으로 고정한 경우
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a20/tol1/GRAPE_CT__a20_t20
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a30/tol1/GRAPE_CT__a30_t20
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a40/tol1/GRAPE_CT__a40_t20
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a50/tol1/GRAPE_CT__a50_t20
+  # - monte_carlo_analysis/data/ct_test/grape_ct/only_tol_case/a60/tol1/GRAPE_CT__a60_t20
+
+  # x_labels[2] * all y_labels
+  # Greedy
+  - monte_carlo_analysis/data/ct_test/greedy/a10/Greedy_a10_t20
+  - monte_carlo_analysis/data/ct_test/greedy/a20/Greedy_a20_t20
+  - monte_carlo_analysis/data/ct_test/greedy/a30/Greedy_a30_t20
+  - monte_carlo_analysis/data/ct_test/greedy/a40/Greedy_a40_t20
+  - monte_carlo_analysis/data/ct_test/greedy/a50/Greedy_a50_t20
+  - monte_carlo_analysis/data/ct_test/greedy/a60/Greedy_a60_t20
+
+  # x_labels[3] * all y_labels
+  # LJF
+  - monte_carlo_analysis/data/ct_test/ljf/a10/LJF_a10_t20
+  - monte_carlo_analysis/data/ct_test/ljf/a20/LJF_a20_t20
+  - monte_carlo_analysis/data/ct_test/ljf/a30/LJF_a30_t20
+  - monte_carlo_analysis/data/ct_test/ljf/a40/LJF_a40_t20
+  - monte_carlo_analysis/data/ct_test/ljf/a50/LJF_a50_t20
+  - monte_carlo_analysis/data/ct_test/ljf/a60/LJF_a60_t20
