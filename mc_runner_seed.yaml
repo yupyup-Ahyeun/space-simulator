@@ -1,0 +1,105 @@
+cases:
+
+  # GRAPE-CT
+  #     tol_minw
+  - config/ct_test/grape_ct/tol_minw_case/a10/a10_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a10/a10_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a10/a10_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a10/a10_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a10/a10_tol1_minw150.yaml
+
+  - config/ct_test/grape_ct/tol_minw_case/a20/a20_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a20/a20_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a20/a20_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a20/a20_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a20/a20_tol1_minw150.yaml
+
+  - config/ct_test/grape_ct/tol_minw_case/a30/a30_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a30/a30_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a30/a30_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a30/a30_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a30/a30_tol1_minw150.yaml
+
+  - config/ct_test/grape_ct/tol_minw_case/a40/a40_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a40/a40_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a40/a40_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a40/a40_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a40/a40_tol1_minw150.yaml
+
+  - config/ct_test/grape_ct/tol_minw_case/a50/a50_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a50/a50_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a50/a50_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a50/a50_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a50/a50_tol1_minw150.yaml
+
+  - config/ct_test/grape_ct/tol_minw_case/a60/a60_tol1_minw10.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a60/a60_tol1_minw50.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a60/a60_tol1_minw75.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a60/a60_tol1_minw100.yaml
+  - config/ct_test/grape_ct/tol_minw_case/a60/a60_tol1_minw150.yaml
+
+  #     only tol
+  - config/ct_test/grape_ct/only_tol_case/a10/a10_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a10/a10_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a10/a10_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a10/a10_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a10/a10_tol200.yaml
+
+  - config/ct_test/grape_ct/only_tol_case/a20/a20_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a20/a20_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a20/a20_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a20/a20_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a20/a20_tol200.yaml
+
+  - config/ct_test/grape_ct/only_tol_case/a30/a30_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a30/a30_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a30/a30_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a30/a30_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a30/a30_tol200.yaml
+
+  - config/ct_test/grape_ct/only_tol_case/a40/a40_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a40/a40_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a40/a40_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a40/a40_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a40/a40_tol200.yaml
+
+  - config/ct_test/grape_ct/only_tol_case/a50/a50_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a50/a50_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a50/a50_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a50/a50_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a50/a50_tol200.yaml
+
+  - config/ct_test/grape_ct/only_tol_case/a60/a60_tol1.yaml
+  - config/ct_test/grape_ct/only_tol_case/a60/a60_tol10.yaml
+  - config/ct_test/grape_ct/only_tol_case/a60/a60_tol50.yaml
+  - config/ct_test/grape_ct/only_tol_case/a60/a60_tol100.yaml
+  - config/ct_test/grape_ct/only_tol_case/a60/a60_tol200.yaml
+
+ 
+  # GRAPE
+  - config/ct_test/grape/grape_a10.yaml
+  - config/ct_test/grape/grape_a20.yaml
+  - config/ct_test/grape/grape_a30.yaml
+  - config/ct_test/grape/grape_a40.yaml
+  - config/ct_test/grape/grape_a50.yaml
+  - config/ct_test/grape/grape_a60.yaml
+
+  # Greedy
+  - config/ct_test/greedy/greedy_a10.yaml
+  - config/ct_test/greedy/greedy_a20.yaml
+  - config/ct_test/greedy/greedy_a30.yaml
+  - config/ct_test/greedy/greedy_a40.yaml
+  - config/ct_test/greedy/greedy_a50.yaml
+  - config/ct_test/greedy/greedy_a60.yaml
+
+  # LJF
+  - config/ct_test/ljf/ljf_a10.yaml
+  - config/ct_test/ljf/ljf_a20.yaml
+  - config/ct_test/ljf/ljf_a30.yaml
+  - config/ct_test/ljf/ljf_a40.yaml
+  - config/ct_test/ljf/ljf_a50.yaml
+  - config/ct_test/ljf/ljf_a60.yaml
+
+
+num_runs: 1
+seed_ranges: [0, 1]
