@@ -251,6 +251,16 @@ class BaseAgent:
         if self.situation_awareness_radius > 0:    
             pygame.draw.circle(screen, self.color, (self.position[0], self.position[1]), self.situation_awareness_radius, 1)
 
+    def draw_bt_visualiser_circle(self, screen):
+        # Draw the circle on bt_visualiser target agent
+        pygame.draw.circle(
+            screen,
+            (255, 0, 255),  # 색상(마젠타)
+            (self.position[0], self.position[1]),
+            25,             # 반지름
+            3               # 두께
+        )
+
     def set_assigned_task_id(self, task_id):
         self.assigned_task_id = task_id
 

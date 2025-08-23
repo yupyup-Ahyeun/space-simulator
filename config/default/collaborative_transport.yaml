@@ -116,3 +116,4 @@ simulation:
   bt_visualiser:
     enabled: True       # Set to True to enable BT visualisation, False to disable
     agent_id: 0         # ID of the agent whose behaviour tree will be visualised
+    circle_on_agent: True   # Set to True to draw the circle on target agent, False to not draw

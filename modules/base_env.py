@@ -16,6 +16,7 @@ class BaseEnv:
         self.rendering_mode = config['simulation'].get('rendering_mode', "Screen")
         self.speed_up_factor = config.get('simulation').get('speed_up_factor', 1)
         self.rendering_options = config['simulation'].get('rendering_options', {})        
+        self.bt_visualiser_config = config['simulation'].get('bt_visualiser', {})
 
         self.seed = config['simulation'].get('random_seed', "None")
         if self.seed == "None":
@@ -142,6 +143,10 @@ class BaseEnv:
                 agent.draw_work_done(self.screen)
             if self.rendering_options.get('agent_situation_awareness_circle'): # Draw each agent's situation awareness radius circle    
                 agent.draw_situation_awareness_circle(self.screen)
+            if self.bt_visualiser_config.get("enabled") and self.bt_visualiser_config.get("agent_id") is not None:
+                if self.bt_visualiser_config.get("circle_on_agent") and agent.agent_id == self.bt_visualiser_config.get("agent_id"):
+                    agent.draw_bt_visualiser_circle(self.screen)
+                    agent.draw_assigned_task_id(self.screen)
 
     def draw_agents(self):
         for agent in self.agents:
