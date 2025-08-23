@@ -15,6 +15,12 @@ class Env(BaseEnv):
 
         # Initialise
         self.reset()
+    
+    def draw_tasks_info(self):
+        if self.rendering_options.get('task_id'): # Draw each task's ID        
+            for task in self.tasks:
+                if task.task_id % 2 == 0:   # slot task의 id는 draw하지 않기 (block task처럼 보이지 않도록)
+                    task.draw_task_id(self.screen)
 
     def reset(self):
         super().reset()
