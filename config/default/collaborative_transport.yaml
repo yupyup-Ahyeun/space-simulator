@@ -2,14 +2,14 @@ scenario:
   environment: scenarios.collaborative_transport
 
 # decision_making: # Case 1
-#   plugin: plugins.grape.grape.GRAPE
+#   plugin: scenarios.collaborative_transport.plugins.grape.GRAPE
 #   GRAPE:
 #     cost_weight_factor: 1.0
 #     social_inhibition_factor: 100
 #     initialize_partition: None # Options: None; Distance      
 #     reinitialize_partition_on_completion: None # Options: None; Distance; 
 
-decision_making: # Case 1-1
+decision_making: # Case 2
   plugin: scenarios.collaborative_transport.plugins.grape_ct.GRAPE_CT
   GRAPE:
     cost_weight_factor: 1.0
@@ -17,10 +17,10 @@ decision_making: # Case 1-1
     initialize_partition: None # Options: None; Distance      
     reinitialize_partition_on_completion: None # Options: None; Distance; 
   CT:
-    waiting_time_tolerance: 10
-    min_waiting_factor: 10
+    waiting_time_tolerance: 10  # tol
+    min_waiting_factor: 10  # min
 
-# decision_making: # Case 1-2
+# decision_making: # Case 2-1 
 #   plugin: scenarios.collaborative_transport.plugins.grape_ct_no_minw.GRAPE_CT_
 #   GRAPE:
 #     cost_weight_factor: 1.0
@@ -28,31 +28,16 @@ decision_making: # Case 1-1
 #     initialize_partition: None # Options: None; Distance      
 #     reinitialize_partition_on_completion: None # Options: None; Distance; 
 #   CT:
-#     waiting_time_tolerance: 10
-
-# decision_making: # Case 2
-#   plugin: plugins.cbba.cbba.CBBA
-#   CBBA:  
-#     max_tasks_per_agent: 5 
-#     task_reward_discount_factor: 0.999 
-#     winning_bid_cancel: True
-#     acceptable_empty_bundle_duration: 500 # sec
+#     waiting_time_tolerance: 10  # tol
 
 # decision_making: # Case 3
-#   plugin: plugins.greedy.greedy.FirstClaimGreedy
-#   FirstClaimGreedy:  
-#     mode: MinDist  # Options: Random; MinDist; MaxUtil
-#     weight_factor_cost: 10000.0 # Only used for `MaxUtil` mode
-#     enforced_collaboration: False  
-
-# decision_making: # Case 3-1
 #   plugin: scenarios.collaborative_transport.plugins.greedy_not_FC.Greedy
 #   FirstClaimGreedy:  
 #     mode: MinDist  # Options: Random; MinDist; MaxUtil
 #     weight_factor_cost: 10000.0 # Only used for `MaxUtil` mode
 #     enforced_collaboration: False  
 
-# decision_making: # Case 3-2
+# decision_making: # Case 4
 #   plugin: scenarios.collaborative_transport.plugins.ljf.LJF
 #   FirstClaimGreedy:  
 #     mode: MinDist  # Options: Random; MinDist; MaxUtil
@@ -101,7 +86,7 @@ tasks:
     tasks_per_generation: 0  # collaborative_transport 시나리오 에서는 짝수로 설정할 것
 
 simulation:
-  random_seed: 1  # Random seed (integer ≥ 1), or None to disable seeding
+  random_seed: None  # Random seed (integer ≥ 1), or None to disable seeding
   sampling_freq: 1.0 
   speed_up_factor: 0 # 0 mean max booster; 1 means normal; 10 means 10-times faster
   max_simulation_time: 0 # 0 means no limit
