@@ -21,7 +21,7 @@ class TableAnalyzer:
         """
         데이터프레임을 사용하여 히트맵을 생성하고 PNG 파일로 저장합니다.
         """
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(8, 4))
         ax = sns.heatmap(df.astype(float), annot=True, fmt=".2f", cmap="YlGnBu",
                          linewidths=.5, linecolor='black',
                          annot_kws={"fontsize": 12})
@@ -32,6 +32,18 @@ class TableAnalyzer:
         # X 및 Y 축 레이블 설정
         ax.set_xticklabels(self.x_labels, rotation=0, ha='center', fontsize=12)
         ax.set_yticklabels(self.y_labels, rotation=0, ha='right', fontsize=12)
+
+        # 최댓값 및 최솟값 텍스트 색상 변경
+        max_val = df.max().max()
+        min_val = df.min().min()
+        for text in ax.texts:
+            val = float(text.get_text())
+            if np.isclose(val, max_val):
+                text.set_color('red')
+                # text.set_fontweight('bold')
+            elif np.isclose(val, min_val):
+                text.set_color('purple')
+                # text.set_fontweight('bold')
 
         plt.title(title, fontsize=18, pad=20)
         plt.tight_layout()
@@ -45,10 +57,10 @@ class TableAnalyzer:
         """
         df_normalized = df.apply(lambda x: (x - x.min()) / (x.max() - x.min()), axis=1)
 
-        plt.figure(figsize=(10, 5))
+        plt.figure(figsize=(8, 4))
         ax = sns.heatmap(df_normalized, annot=df, fmt=".2f", cmap="YlGnBu",
                          linewidths=.5, linecolor='black', vmin=0, vmax=1,
-                         annot_kws={"fontsize": 13})
+                         annot_kws={"fontsize": 12})
         
         cbar = ax.collections[0].colorbar
         cbar.ax.tick_params(labelsize=12)
@@ -56,6 +68,18 @@ class TableAnalyzer:
         # X 및 Y 축 레이블 설정
         ax.set_xticklabels(self.x_labels, rotation=0, ha='center', fontsize=12)
         ax.set_yticklabels(self.y_labels, rotation=0, ha='right', fontsize=12)
+
+        # 최댓값 및 최솟값 텍스트 색상 변경
+        max_val = df.max().max()
+        min_val = df.min().min()
+        for text in ax.texts:
+            val = float(text.get_text())
+            if np.isclose(val, max_val):
+                text.set_color('red')
+                # text.set_fontweight('bold')
+            elif np.isclose(val, min_val):
+                text.set_color('purple')
+                # text.set_fontweight('bold')
 
         plt.title(title, fontsize=16, pad=20)
         plt.tight_layout()
